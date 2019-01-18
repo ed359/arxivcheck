@@ -44,21 +44,16 @@ def get_arxiv_info(value, field="id"):
 
 
 def generate_bib_from_arxiv(arxiv_item, value, field="id"):
-    # arxiv_cat = arxiv_item.arxiv_primary_category["term"]
     if field == "ti":
-        journal = "arxiv:"+arxiv_item["id"].split("http://arxiv.org/abs/")[1]
+        article_id = arxiv_item["id"].split("http://arxiv.org/abs/")[1]
     else:
-        journal = "arxiv:"+value
+        article_id = value
 
-    url = arxiv_item.link
+    key = "arxiv:"+article_id
     title = arxiv_item.title
     authors = arxiv_item.authors
     if len(authors) > 0:
-        first_author = authors[0]["name"].split(" ")
         authors = " and ".join([author["name"] for author in authors])
-    else:
-        first_author = authors
-        authors = authors
 
     published = arxiv_item.published.split("-")
     year = ''
@@ -67,16 +62,23 @@ def generate_bib_from_arxiv(arxiv_item, value, field="id"):
     bib = BibDatabase()
     bib.entries = [
         {
-            "journal": journal,
-            "url": url,
-            "ID": year+first_author[0]+journal,
             "title": title,
-            "year": year,
             "author": authors,
+            "year": year,
+            "eprinttype": "arxiv",
+            "eprint": article_id,
+            "keywords": "",
+            "abstract": arxiv_item.summary,
+
+            "ID": key,
             "ENTRYTYPE": "article"
         }
     ]
-    bib = BibTexWriter().write(bib)
+    writer = BibTexWriter()
+    writer.add_trailing_comma = True
+    writer.display_order = ['title', 'author', 'year','eprinttype','eprint','keywords','abstract']
+    writer.indent = "  "
+    bib = writer.write(bib)
     return bib
 
 

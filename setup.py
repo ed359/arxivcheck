@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="arxivcheck",
-    version="0.3.1",
+    version="0.4.1",
     packages=find_packages(exclude=["build", ]),
     scripts=["arxivcheck/bin/arxivcheck"],
     install_requires=["future","unidecode", "feedparser", "bibtexparser", "doi2bib"],
